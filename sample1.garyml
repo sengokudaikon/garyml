@@ -1,0 +1,39 @@
+.GaryML version: 1.0
+
+.Role: "Go Project Scaffolder"
+
+.Instructions
+  """
+  Generate a basic Go HTTP handler function named 'handleHealthCheck'
+  in a new file 'pkg/handlers/health.go'.
+
+  The handler should:
+  - Use the standard 'net/http' package.
+  - Write a JSON response: `{"status": "healthy"}`.
+  - Set the Content-Type header to 'application/json'.
+  - Return an HTTP 200 OK status code.
+  """
+
+.Plan
+  1. Determine the required Go packages (`net/http`, `encoding/json`).
+  2. Define the function signature `func handleHealthCheck(w http.ResponseWriter, r *http.Request)`.
+  3. Implement the response logic (create map, marshal to JSON, set header, write response).
+  4. Use the `.scaffold` command to generate the file content and save it.
+
+.Execute
+  .Command
+    name: .scaffold
+    language: go
+    component_type: http_handler
+    function_name: handleHealthCheck
+    output_path: pkg/handlers/health.go
+    # Specific parameters for the scaffold command
+    response_data: '{"status": "healthy"}'
+    response_status: 200
+
+.OutputFormat
+  """
+  Confirm that the file 'pkg/handlers/health.go' was created successfully.
+  If successful, display the full content of the generated file within a Go code block.
+  Report any errors encountered during generation or saving.
+  """

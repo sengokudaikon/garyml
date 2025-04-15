@@ -1,0 +1,51 @@
+.GaryML version: 1.0
+
+.Role: "Code Patcher"
+
+.Instructions: "Apply the provided code patch to the 'config.py' file."
+
+.Context id=config_file path=settings/config.py type=file
+  ```python
+  # settings/config.py
+  DEBUG = True
+  SECRET_KEY = 'old-temporary-key'
+  ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+  DATABASE_URL = 'sqlite:///db.sqlite3'
+  ```
+.Diff id=key_update_diff format=search_replace # Using Aider's format example
+"""
+settings/config.py
+
+
+>>>>>>> SEARCH
+SECRET_KEY = 'old-temporary-key'
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+=======
+SECRET_KEY = 'a-much-better-secret-key-needs-env-var' # TODO: Use env var
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'myapp.com']
+<<<<<<< REPLACE
+
+"""
+Alternative Diff using OpenAI's V4A format:
+.Diff id=key_update_diff format=v4a
+"""
+*** Begin Patch
+*** Update File: settings/config.py
+@@ DEBUG = True # Example context line if needed
+DEBUG = True
+-SECRET_KEY = 'old-temporary-key'
+-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
++SECRET_KEY = 'a-much-better-secret-key-needs-env-var' # TODO: Use env var
++ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'myapp.com']
+DATABASE_URL = 'sqlite:///db.sqlite3'
+*** End Patch
+"""
+
+.Execute
+.ToolCall
+name: apply_patch # Assumes a tool matching OpenAI's example exists
+arguments:
+input: .key_update_diff # Reference the diff block by its ID
+
+.OutputFormat: "Confirm patch application status (success or failure). If failed, provide the error message."

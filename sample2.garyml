@@ -1,0 +1,59 @@
+.GaryML version: 1.0
+
+.Role: "Python Code Analyzer"
+
+.Instructions
+  """
+  Analyze the relationship between the two provided Python modules.
+  Specifically, identify which functions or classes defined in 'utils.py'
+  are imported and used within 'service.py'.
+  """
+
+.Context id=py_utils path=src/app/utils.py type=file
+  ```python
+  # src/app/utils.py
+  def format_user_data(user_id: int) -> dict:
+      # ... complex formatting logic ...
+      return {"id": user_id, "formatted": True}
+
+  class StringHelper:
+      def capitalize_first(self, text: str) -> str:
+          return text.capitalize()
+
+  _INTERNAL_CONSTANT = 123 # Should not be imported directly
+  ```
+.Context id=py_service path=src/app/service.py type=file
+ ```python
+
+# src/app/service.py
+from .utils import format_user_data, StringHelper
+# from .utils import _INTERNAL_CONSTANT # Example of what NOT to do
+
+class UserService:
+    def __init__(self):
+        self.string_helper = StringHelper()
+
+    def get_user_display(self, user_id: int, name: str) -> dict:
+        display_data = format_user_data(user_id)
+        display_data["name"] = self.string_helper.capitalize_first(name)
+        return display_data
+
+# Direct usage (less common but possible)
+# print(format_user_data(1))
+```
+.Query: "List the symbols imported from 'utils.py' into 'service.py' and show where they are instantiated or called."
+
+.Execute
+.Command
+name: .codeinsight # Or perhaps .dependency
+targets: [py_utils, py_service] # Analyze interaction between these contexts
+analysis: cross_module_usage
+
+.OutputFormat
+"""
+Provide a clear summary report:
+
+    List symbols imported from utils.py: [symbol1, symbol2, ...]
+
+    For each imported symbol, describe its usage in service.py (e.g., "called in UserService.get_user_display", "instantiated in UserService.init").
+    """
